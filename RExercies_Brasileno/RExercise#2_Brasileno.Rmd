@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## Part A Arithmetic Operations
+# Part A Arithmetic Operations
 ```{r}
 ## 01
 a <- 17
@@ -19,7 +19,7 @@ a * b
 a / b
 ```
 
-## Part B Division
+# Part B Division
 ```{r}
 ## 02
 a <- 17
@@ -28,7 +28,7 @@ a %% b
 a %/% b
 ```
 
-## Part C Power
+# Part C Power
 ```{r}
 ## 03
 2 ^ 10
@@ -47,7 +47,7 @@ a %/% b
 ## correct
 ```
 
-## Part B Basic Types
+# Part B Basic Types
 ```{r}
 ## 01
 x <- 42
@@ -107,3 +107,111 @@ typeof (y)
 ```{r}
 ##Question 4:
 #Yes they can produce different outputs because R stores data.
+```
+#Part C — Type Conversion
+```{r}
+num_string <- "123"
+
+# TODO: Convert num_string to a numeric value using as.numeric()
+# Then check its type with typeof(), class(), and mode()
+num_val <- as.numeric(num_string)
+
+num_val
+typeof(num_val)
+class(num_val)
+mode(num_val)
+```
+
+```{r}
+# TODO: Convert the number 0 and the number 1 to logical using as.logical()
+# What do you get?
+as.logical(0)
+as.logical(1)
+```
+
+```{r}
+bad_string <- "hello123"
+
+# TODO: Try converting bad_string to numeric using as.numeric()
+# Run this chunk and observe the warning message and the result
+as.numeric(bad_string)
+```
+Question #5
+```{r}
+#Answer1: Why R warns instead of crashing: R issues a warning and converts unparseable strings to NA so large data pipelines can continue processing despite messy inputs. 
+#Answer2: Risks of ignoring warnings: Unnoticed NA values can propagate through subsequent calculations, causing functions like means or statistical models to silently fail or return incorrect results.
+```
+Question #6
+```{r}
+#Answer: What as.logical(2) and as.logical(-1) produce: Both as.logical(2) and as.logical(-1) produce TRUE.
+#Explanation: R follows the standard logical conversion rule where the number 0 evaluates to FALSE, while any non-zero numeric value (whether positive or negative, integer or decimal) evaluates to TRUE.
+```
+#Part D — Strings, paste(), and paste0()
+```{r}
+first_name <- "Juan"
+last_name <- "Dela Cruz"
+
+# TODO: Print first_name and last_name using print() and/or cat()
+print(first_name)
+print(last_name)
+cat(first_name, last_name, "\n")
+```
+
+```{r}
+# TODO: Use paste() to combine first_name and last_name into a full name
+# TODO: Use paste0() to do the same, and compare the two results
+paste(first_name, last_name)
+paste0(first_name, last_name)
+```
+
+```{r}
+# TODO: Use paste() with the argument sep = "-" to join first_name and
+# last_name with a dash instead of a space
+paste(first_name, last_name, sep = "-")
+```
+
+```{r}
+age <- 21
+full_name <- paste(first_name, last_name)
+
+# TODO: Use paste0() to build the sentence:
+# "Juan Dela Cruz is 21 years old." by combining full_name, age, and text
+paste0(full_name, " is ", age, " years old.")
+```
+Question #7
+```{r}
+#Answer: paste() inserts a single space (sep = " ") between combined elements by default, producing "Juan Dela Cruz". paste0() concatenates strings with no separator (sep = "") by default, producing "JuanDela Cruz".
+```
+Question #8
+```{r}
+#Answer: No, it did not cause an error. Internally, paste0() automatically coerces (converts) non-character inputs like the numeric variable age into a character string before concatenating them. This is an example of implicit type conversion (coercion), similar to how as.character() explicitly converts values to strings.
+```
+#Part E — Critical Thinking Challenge
+```{r}
+# TODO: Predict, then test: what is the result of "5" + 5 in R?
+# Run it and read the error message carefully.
+"5" + 5
+```
+
+```{r}
+# TODO: Now fix the code above so that "5" + 5 correctly evaluates to 10
+# using an appropriate conversion function.
+as.numeric("5") + 5
+```
+Question #9
+```{r}
+#Answer: R requires explicit conversion because mathematical operators (like +) are strictly defined for numeric types, preventing ambiguous behavior. If R guessed intent, operations could become ambiguous—such as deciding whether "5" + 5 should mean numeric addition (10) or string concatenation ("55"). Requiring explicit coercion ensures strict type safety and prevents unexpected silent errors in statistical calculations.
+```
+Question #10
+```{r}
+#Answer: The column was likely imported as a character vector (or factor) rather than numeric, often due to quotes, commas, or non-numeric header/text entries in the file. To diagnose this, I would check the data structure using typeof(), class(), or mode(). To fix it, I would convert the column using as.numeric(), checking for coercion warnings (NAs introduced by coercion) if non-numeric characters caused parsing failures, and then run sum() with na.rm = TRUE.
+```
+Conclusion
+```{r}
+#Answer: R enforces strict rules across basic data types to ensure statistical computations remain predictable and precise. Understanding functions like typeof() and class() helps identify an object's internal structure and method behaviors, preventing common errors when manipulating variables. Mastering explicit type conversions ensures data is properly formatted before performing arithmetic or combining datasets, preventing silent bugs or failed operations.
+```
+
+
+
+
+

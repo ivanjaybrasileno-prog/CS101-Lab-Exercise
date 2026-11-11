@@ -1,0 +1,192 @@
+---
+title: "RExercise-6_brasileno.Rmd"
+author: "Ivan Jay Brasileno"
+date: "2026-11-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+R Lab: Data Structures - Data Frames
+
+Part A — Creating Data Frames
+```{r}
+name <- c("Ana", "Ben", "Cid", "Dex", "Eli")
+age <- c(20, 21, 19, 22, 20)
+passed <- c(TRUE, TRUE, FALSE, TRUE, FALSE)
+```
+
+```{r}
+students <- data.frame(name = name, age = age, passed = passed)
+print(students)
+```
+
+```{r}
+typeof(students$name)
+class(students$name)
+```
+
+```{r}
+courses <- data.frame(
+  course_code = c("IS101", "IS102", "IS103"),
+  units = c(3, 3, 2),
+  instructor = c("Dr. P. Reyes", "Dr. R. Santos", "Dr. S. Cruz")
+)
+```
+Question #1
+
+Why equal length is required: A data frame is structured like a table or spreadsheet where each row represents a single observation and each column represents a variable. For every observation (row) to have a corresponding value for every variable (column), all vectors forming the columns must have the exact same length (number of rows).
+
+Question #2
+
+Why the description makes sense: Under the hood in R, a data frame is actually a special type of list where every element of the list is an atomic vector of equal length.
+Why columns can have different data types while a single column cannot:
+Lists vs. Vectors: A list in R can store elements of different data types (e.g., characters, numbers, booleans). Since a data frame is a list of vectors, each column (list element) can store a different data type from the other columns (e.g., column 1 can be character, column 2 numeric, and column 3 logical).
+
+Single Column Restriction: A single column is an atomic vector. Atomic vectors in R are homogeneous—meaning all values inside a single vector must be of the exact same data type.
+
+Part B — Subsetting Data Frames
+```{r}
+# Way 1: Dollar sign notation
+students$age
+
+# Way 2: Double square brackets
+students[["age"]]
+
+# Way 3: Single square brackets
+students["age"]
+
+# Compare output/class of each
+class(students$age)
+class(students[["age"]])
+class(students["age"])
+```
+
+```{r}
+students[2, ]
+```
+
+```{r}
+students[3, "name"]
+```
+
+```{r}
+students[students$passed == TRUE, ]
+```
+
+```{r}
+students[students$passed == TRUE & students$age > 19, ]
+```
+
+Question #3
+
+Class Comparison:
+class(students$age) returns "numeric" (an atomic vector).
+
+class(students["age"]) returns "data.frame" (a single-column data frame).
+
+Explanation:
+Single square brackets [] act as a sub-setting operator that preserves the data structure. When subsetting a list/data frame using [], R returns a smaller list/data frame containing only the selected column.
+
+Double square brackets [[]] (and the $ operator) act as an extract operator that pulls out the contents. They reach inside the list container and extract the raw atomic vector itself.
+
+Question #4
+What the & operator does: The & operator performs an element-wise logical AND operation across the two logical vectors (students$passed == TRUE and students$age > 19). It evaluates each corresponding index of both vectors and produces a single combined logical vector of TRUE and FALSE values. An index in the final logical vector will be TRUE only if both conditions are met simultaneously.
+
+What would change with | (OR): Using | performs an element-wise logical OR operation. The combined result will be TRUE for any student who satisfies either condition (passed is TRUE OR age is greater than 19), resulting in more rows being returned (or equal rows if every student qualifies) compared to using &.
+
+Part C — Data Frame Properties
+```{r}
+str(students)
+```
+
+```{r}
+dim(students)
+nrow(students)
+ncol(students)
+```
+
+```{r}
+names(students)
+# or: colnames(students)
+```
+
+```{r}
+summary(students)
+```
+
+Question #5
+Numeric (age): R calculates five-number statistical summaries plus the mean: Min, 1st Quartile, Median, Mean, 3rd Quartile, and Max.   
+Logical (passed): R counts the frequencies (counts) of TRUE and FALSE values, along with any NA values.
+Character (name): R simply reports basic metadata: Length (total number of elements), Class (character), and Mode (character).
+
+Why "mean" doesn't make sense for name: The name column consists of text/character strings (e.g., "Ana", "Ben"). A mean requires numeric quantities that can be added together and divided; arithmetic operations are mathematically undefined and meaningless on text values.
+
+Question #6
+When str() is more useful: str() (structure) is best when inspecting data types, dimensions, and the internal organization of an object. It is essential during initial data loading or debugging to quickly confirm if columns are parsed correctly (e.g., checking if factors/characters, numbers, or dates were loaded as expected).
+When summary() is more useful: summary() is best when performing initial exploratory data analysis to understand data distribution. It provides key statistical metrics (ranges, central tendencies, counts, missing values) to quickly spot outliers or data skewness.
+
+Part D — Data Frame Operations
+```{r}
+students$year_level <- c(2, 3, 1, 4, 2)
+```
+
+```{r}
+students$passed <- NULL
+```
+
+```{r}
+students[order(students$age), ]
+```
+
+```{r}
+students[order(students$age, decreasing = TRUE), ]
+# or: students[order(-students$age), ]
+```
+Question #7
+Can you still run the filter (students$passed == TRUE)?
+No, you cannot run it as intended. Once the column is set to NULL, accessing students$passed returns NULL. Evaluating NULL == TRUE yields logical(0) (an empty logical vector). Attempting to use students[logical(0), ] results in zero rows being selected.
+
+Why structure tracking matters: In R, data transformations modify the state of your data frame in memory. If an upstream operation removes or renames a column, subsequent code that relies on that column existing will fail or produce incorrect/empty results. Keeping track of your data frame's structure ensures your execution sequence remains logically valid.
+
+Question #8
+Step 1: students$age extracts the numeric vector of ages.
+Step 2: order(students$age) evaluates the values in the age vector and returns an integer vector of index positions indicating where each row needs to move to put the ages in ascending order.
+Step 3: The returned position vector is passed into the row slot of the single bracket operator students[row_indices, ]
+Step 4: By leaving the column slot empty after the comma, R rearranges all existing rows of the entire data frame to match that specified sequence of row positions.
+
+Part E — Critical Thinking Challenge
+```{r}
+# Create the grades data frame
+grades <- data.frame(
+  name = c("Ana", "Ben", "Cid", "Dex", "Eli"),
+  midterm = c(85, 78, 92, 88, 70),
+  final = c(90, 82, 95, 84, 75)
+)
+
+# Add average column
+grades$average <- (grades$midterm + grades$final) / 2
+
+# Add remarks column based on passing threshold of 75
+grades$remarks <- ifelse(grades$average >= 75, "Passed", "Failed")
+```
+
+```{r}
+# Print failed students showing name and average
+grades[grades$remarks == "Failed", c("name", "average")]
+```
+Question #9
+To investigate whether a big drop or a low midterm score is more responsible for failing, these are the steps:
+1.Create a score_change column: Add a new column to calculate the difference between the final and midterm grades (grades$score_change <- grades$final - grades$midterm). Negative values represent a drop in performance.
+2.Filter failed students: Subset the data frame to isolate only students whose status/remarks are "Failed".
+3.Sort and compare:
+
+Sort the subsetted data frame by midterm in ascending order using order() to see how many failing students started with low midterm scores
+Sort the subsetted data frame by score_change in ascending order to see how many failing students experienced severe score drops from midterm to final.   
+4.Analyze the pattern: Compare which group (those with low initial midterms vs. those with large negative score changes) accounts for the majority of the failed students.
+
+Conclusion:
+A data frame is a two-dimensional, tabular data structure in R where rows represent observations and columns represent variables. Under the hood, it is a named list of atomic vectors of equal length, allowing each column to hold a distinct data type (such as numeric, character, or logical) while keeping data within a column uniform. Because real-world datasets naturally feature tabular structures containing mixed data types, the data frame serves as R's primary tool for data manipulation, cleaning, and statistical analysis.
+

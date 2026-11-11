@@ -1,0 +1,170 @@
+---
+title: "RExercise#7_brasileno.Rmd"
+author: "Ivan Jay Brasileno"
+date: "2026-11-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Part A — Creating Data Frames
+Question #1
+```{r}
+# Define the six vectors from Figure 1
+Respondent <- 1:20
+Sex <- c(2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2)
+FathersOccupation <- c(1, 3, 3, 3, 1, 2, 3, 1, 1, 1, 3, 2, 1, 3, 3, 1, 3, 1, 2, 1)
+PersonsAtHome <- c(5, 7, 3, 8, 5, 9, 6, 7, 8, 4, 7, 5, 4, 7, 8, 8, 3, 11, 7, 6)
+SiblingsAtSchool <- c(6, 4, 4, 1, 2, 1, 5, 3, 1, 2, 3, 2, 5, 5, 2, 1, 2, 5, 3, 2)
+TypesOfHouses <- c(1, 2, 3, 1, 1, 3, 3, 1, 2, 3, 2, 3, 2, 2, 3, 3, 3, 3, 3, 2)
+
+# Check and confirm the length of each vector
+length(Respondent)
+length(Sex)
+length(FathersOccupation)
+length(PersonsAtHome)
+length(SiblingsAtSchool)
+length(TypesOfHouses)
+```
+
+```{r}
+# Combine vectors into a data frame named 'survey'
+survey <- data.frame(
+  Respondent = Respondent,
+  Sex = Sex,
+  FathersOccupation = FathersOccupation,
+  PersonsAtHome = PersonsAtHome,
+  SiblingsAtSchool = SiblingsAtSchool,
+  TypesOfHouses = TypesOfHouses
+)
+
+# Display the complete data frame
+print(survey)
+```
+a.Describe the data. Get the structure or the summary of the data.
+```{r}
+# View data structure
+str(survey)
+
+# View statistical summary
+summary(survey)
+```
+My Observation:
+str(survey) reveals the structure of the dataset (20 rows, 6 columns, and data types), while summary(survey) calculates key statistics (mean, median, quartiles, and range) for numeric variables.
+
+b. Check for the dimensions. How many rows and columns?
+```{r}
+# Check total dimensions (rows, columns)
+dim(survey)
+
+# Check number of rows and columns individually
+nrow(survey)
+ncol(survey)
+```
+My oberservation:
+The survey data frame has 20 rows (representing the 20 survey respondents) and 6 columns (representing the survey variables).
+
+c. Create factors for Sex, Father's Occupation and Types of Houses.
+```{r}
+# Convert numeric codes into factor variables with meaningful text labels
+survey$Sex <- factor(survey$Sex, 
+                     levels = c(1, 2), 
+                     labels = c("Male", "Female"))
+
+survey$FathersOccupation <- factor(survey$FathersOccupation, 
+                                   levels = c(1, 2, 3), 
+                                   labels = c("Farmer", "Driver", "Others"))
+
+survey$TypesOfHouses <- factor(survey$TypesOfHouses, 
+                               levels = c(1, 2, 3), 
+                               labels = c("Wood", "Semi-Concrete", "Concrete"))
+```
+My Observation:
+The numeric vectors Sex, FathersOccupation, and TypesOfHouses have been converted into categorical factor variables with descriptive category labels (Male/Female, Farmer/Driver/Others, and Wood/Semi-Concrete/Concrete).
+
+d. Get the mean for all columns.
+```{r}
+# Calculate means for numeric columns only (factors cannot be averaged)
+colMeans(survey[sapply(survey, is.numeric)])
+```
+Observation:
+The average values for the numerical variables are:
+Respondent: 10.5
+PersonsAtHome: 6.4
+SiblingsAtSchool: 3.2
+
+e. Extract the 1st five rows and then all the columns using subsetting functions. What is the output?
+```{r}
+# Subsetting first 5 rows and all columns
+survey[1:5, ]
+```
+My Observation:
+The output returns a sub-table containing only the first 5 records (Respondents 1 through 5) across all 6 columns of the data frame.
+
+f. Select the variable types of houses then store the vector that results as types_houses.
+```{r}
+# Extract TypesOfHouses column into a standalone vector
+types_houses <- survey$TypesOfHouses
+
+# Print vector
+types_houses
+```
+My Observation:
+This extracts the TypesOfHouses variable as an isolated vector stored under the name types_houses, containing the 20 house-type codes or labels.
+
+
+g. Select only all Males respondent that their father occupation was farmer.
+```{r}
+# Subsetting male respondents whose father is a farmer
+subset(survey, Sex == "Male" & FathersOccupation == "Farmer")
+```
+My Observation:
+The result is an empty data frame with 0 rows because none of the male respondents in the dataset (Respondents 3, 11, and 19) have a father whose recorded occupation is a farmer.
+
+h. Select only all females respondent that have greater than or equal to 5 number of siblings attending school.
+```{r}
+# Subsetting female respondents with 5 or more siblings at school
+subset(survey, Sex == "Female" & SiblingsAtSchool >= 5)
+```
+My Observation:
+
+The resulting subset contains 5 respondents (Respondents 1, 7, 13, 14, and 18) who are female and have 5 or more siblings currently attending school.
+
+
+Question #2
+Answer: Checking vector lengths ensures every row correctly aligns to the exact same respondent across all variables. In R, data frames require equal-length columns to prevent misaligned data or code execution errors.
+
+Question #3
+Answer:
+Categories (Nominal Data): Sex, FathersOccupation, and TypesOfHouses (numbers represent labels, not quantities).
+Actual Counts: PersonsAtHome and SiblingsAtSchool (represent actual counts of people).
+Why averaging is misleading: Category codes have no numerical value. For example, averaging Sex to get 1.85 is meaningless because 1 and 2 are just labels for Male and Female, not measurable quantities.
+
+Question #4:
+Answer:
+Misinterpretation: Someone without the legend might assume 1 is a numerical score, rank, or count rather than representing "Male".
+
+Problem Illustrated: Coded data lacks clarity and context, making it hard to interpret correctly until recoded into meaningful text labels.
+
+Question #5
+Answer:
+Count: 3 males (sum(survey$Sex == 1) or nrow() returns 3).
+
+Generalization: No, confidence would be very low. A sample of only 3 males (out of 20 total respondents) is far too small to represent a larger population, making any patterns unreliable due to high sampling error.
+
+Question #6
+Answer:
+Why R doesn't know: R processes columns based purely on their data type.
+Because Sex and TypesOfHouses are stored as raw numbers (1, 2, 3), R treats them as mathematical values until they are explicitly converted into factors.
+
+Storage vs. Meaning: Data storage is just the technical format R holds in memory (numeric), while data meaning is what those numbers represent in the real world. R handles the math, but humans must define the context.
+
+Question #7
+Answer:
+Meaningful Mean: PersonsAtHome (mean = 6.4). It measures an actual numerical count of people, so an average tells you the typical household size.
+
+Not Meaningful Mean: Sex (mean = 1.85). The numbers 1 and 2 are just arbitrary labels for Male and Female, not amounts. Averaging category codes produces a meaningless number.
+
+
+

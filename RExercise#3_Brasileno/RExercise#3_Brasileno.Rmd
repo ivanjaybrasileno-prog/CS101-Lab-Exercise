@@ -1,0 +1,254 @@
+---
+title: "RExercise#3_brasileno.Rmd"
+author: "Ivan Jay Brasileno"
+date: "2026-10-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Part A Creating Vectors: c(), seq(), rep()
+```{r}
+scores <- c(88, 92, 79, 95, 84)
+
+subjects <- c("Math", "Science", "English", "History", "PE")
+```
+
+```{r}
+# Odd numbers from 1 to 19
+odds <- seq(1, 19, by = 2)
+
+# Exactly 5 evenly spaced numbers from 0 to 1
+even_numbers <- seq(0, 1, length.out = 5)
+```
+
+```{r}
+# Repeat "A" four times
+rep_a <- rep("A", 4)
+
+# Repeat each element twice
+rep_each <- rep(c("A", "B"), each = 2)
+
+# Repeat the entire sequence twice
+rep_times <- rep(c("A", "B"), times = 2)
+```
+Question #1:
+```{r}
+age <- c(15, 28, 32, 36, 27, 18, 52, 39, 42, 29,
+         35, 31, 27, 22, 37, 34, 19, 20, 57, 49,
+         50, 37, 46, 25, 17, 12, 42, 53, 41, 51,
+         35, 24, 33, 8)
+#A
+length(age) #Answer 34 data points.
+#B.
+1 / age #Answer This produces a vector containing the reciprocal of every age. Each element is calculated as \(1 \div \text{age}\). For example, the reciprocal of 15 is approximately 0.0667.
+#C.
+new_age <- c(age, 0, age)
+
+length(new_age) #Answer The original age vector is combined with a zero and another copy of age. The new vector contains 69 elements, and the zero is at position 35.
+#D.
+min(age)
+max(age) 
+#Answer: Minimum: 8 Maximum: 57
+```
+Question #2:
+```{r}
+rep(c("A", "B"), each = 2)
+rep(c("A", "B"), times = 2)
+#Answer: The each argument repeats every element individually before moving to the next element, resulting in "A", "A", "B", "B". The times argument repeats the entire vector, resulting in "A", "B", "A", "B".
+```
+Question #3:
+```{r}
+seq(1, 20, by = 2)
+
+seq(1, 20, length.out = 5)
+#Answer: The by argument controls the interval between consecutive numbers. In this example, it increases by 2 each time. The length.out argument controls how many numbers the sequence contains, so the second command returns exactly five evenly spaced numbers between 1 and 20. I would use by for a fixed interval and length.out when I need a specific number of values.
+```
+Question #4:
+```{r}
+#A Generate a sequence for 20 to 60. Name the vector as vec_num
+vec_num <- seq(20, 60) 
+
+#Answer: This creates a sequence of integers from 20 through 60.
+#B Get the mean of vec_num
+mean(vec_num)
+#Answer: 40
+
+#C Get the sum for vec_num.
+#Answer:1640
+
+#D d. How many data points are there in vec_num?
+length(vec_num)
+#Answer:41 data points.
+```
+#Part B Subsetting (Accessing) Vectors
+```{r}
+grades <- c(88, 92, 79, 95, 84)
+names(grades) <- c("Math", "Science", "English", "History", "PE")
+
+# Access the 3rd element
+grades[3]
+
+# Access the 1st and 4th elements
+grades[c(1, 4)]
+
+# Access Science and PE using their names
+grades[c("Science", "PE")]
+```
+
+```{r}
+grades[-c(1, 4)]
+```
+
+```{r}
+grades[grades >= 85]
+```
+Question #5
+```{r}
+#Answer: Negative indexing is best used when you know the exact position of an element you want to exclude, such as dropping an ID column in the first position (df[,-1]) or removing a baseline measurement. Logical indexing is the better tool when you want to filter data based on specific conditions or values without knowing their exact positions, such as filtering a dataset for passing exam scores (grades[grades >= 70]) or selecting transactions above a certain price threshold.
+```
+Question #6
+```{r}
+#Answer: Running grades[10] returns <NA> (or NA if the vector is un-named). R responds this way instead of throwing an error because R is designed to handle missing values gracefully during vector operations; indexing beyond a vector's length represents an unknown value rather than a structural code failure.
+```
+Question #7
+```{r}
+Filter(function(i) { all(i %% c(3, 5, 7) != 0) }, seq(100))
+```
+#Part C — Vector Operations and append()
+```{r}
+x <- c(1, 2, 3, 4)
+y <- c(10, 20, 30, 40)
+
+# TODO: Add x and y element-wise, and print the result
+x + y
+
+# TODO: Multiply every element of x by 2
+x * 2
+```
+
+```{r}
+z <- c(1, 2, 3, 4, 5, 6)
+short <- c(1, 0)
+
+# TODO: Add z and short together and print the result. Run this even 
+# though the vectors are different lengths -- observe what R does.
+z + short
+```
+
+```{r}
+fruits <- c("apple", "banana", "cherry")
+
+append(fruits, "date")
+
+append(fruits, "kiwi", after = 1)
+```
+Question #8
+```{r}
+#Answer: R’s recycling rule automatically repeated the shorter vector short (c(1, 0)) three times until its length matched the longer vector z (6 elements), turning it into c(1, 0, 1, 0, 1, 0) so element-wise addition could be performed.
+```
+Question #9
+```{r}
+##Part 1: Adding z (length 6) to c(1, 0, 1) (length 3)
+#Answer: Yes, it works cleanly without any warnings. The output is 2 2 4 5 5 7.
+
+##Part 2:Then try adding z to c(1, 0, 1, 1) (length 4). Compare the warning (or lack of one) in each case, and explain what condition determines whether R recycles silently versus with a warning.
+#Answer: When adding z to c(1, 0, 1, 1), R still computes the addition (2 2 4 5 6 6), but it issues a warning message: longer object length is not a multiple of shorter object length.The condition that determines whether R recycles silently or with a warning is whether the length of the longer vector is a multiple of the length of the shorter vector: Silent Recycling: Occurs when the longer length is an exact multiple of the shorter length (e.g., length 6 and length 3, or length 6 and length 2), so the shorter vector repeats evenly without partial recycling. Recycling with Warning: Occurs when the longer length is not an exact multiple (e.g., length 6 and length 4), causing R to truncate the recycled vector on its final repetition.
+```
+#Part D — Lists: Creating and Subsetting
+```{r}
+# TODO: Create a list called student with these named elements:
+# name = "Maria Santos", age = 20, grades = c(88, 92, 79),
+# is_enrolled = TRUE
+student <- list(
+  name = "Maria Santos",
+  age = 20,
+  grades = c(88, 92, 79),
+  is_enrolled = TRUE
+)
+
+student
+```
+
+```{r}
+# TODO: Access the "grades" element of student using single brackets
+# student["grades"] -- then check its type with class()
+student["grades"]
+class(student["grades"])
+```
+
+```{r}
+# TODO: Access the "grades" element of student using double brackets
+# student[["grades"]] -- then check its type with class()
+student[["grades"]]
+class(student[["grades"]])
+```
+
+```{r}
+# TODO: Access the "name" element of student using the $ operator
+# student$name
+student$name
+```
+
+```{r}
+# TODO: From student, extract just the SECOND grade in the grades vector
+# in a single expression, e.g. student[["grades"]][2] or student$grades[2]
+student$grades[2]
+```
+Question #10:
+```{r}
+#Answer: Running class(student["grades"]) returns "list", while class(student[["grades"]]) returns "numeric".   Single-bracket indexing ([ ]) subsets the list and always returns a smaller sub-list containing the selected element. Double-bracket indexing ([[ ]]) extracts the actual underlying object/data stored inside that list element (in this case, a numeric vector).
+```
+Question #11:
+```{r}
+#Answer: Vectors are homogeneous, meaning every element must be of the same basic data type (e.g., all numbers or all character strings). Therefore, single brackets [ ] can directly extract individual elements without changing their fundamental structure. In contrast, lists are heterogeneous containers that can hold elements of different types and complex data structures, such as vectors, data frames, or other lists. R uses [ ] to return a sub-list wrapper (preserving the container structure) and [[ ]] to unwrap and extract the specific object stored inside.
+```
+#Part E — Critical Thinking Challenge
+```{r}
+inventory <- list(
+  item = c("Notebook", "Pen", "Eraser"),
+  price = c(25.50, 10.00, 5.00),
+  in_stock = c(TRUE, TRUE, FALSE)
+)
+
+# TODO: Using what you learned in Parts B and D, print only the items
+# (from inventory$item) that are currently in stock (in_stock == TRUE)
+inventory$item[inventory$in_stock]
+```
+
+```{r}
+# TODO: A new product "Ruler" priced at 15.00 and in stock (TRUE) needs
+# to be added to inventory. Use append() to add "Ruler" to
+# inventory$item, 15.00 to inventory$price, and TRUE to inventory$in_stock.
+# (You will need three separate append() calls, one per vector.)
+
+inventory$item <- append(inventory$item, "Ruler")
+inventory$price <- append(inventory$price, 15.00)
+inventory$in_stock <- append(inventory$in_stock, TRUE)
+
+# Print updated inventory
+inventory
+```
+Question #12:
+```{r}
+#Answer: Vector extraction: The $ operator accesses and extracts inventory$item as a character vector (c("Notebook", "Pen", "Eraser")) and inventory$in_stock as a logical vector (c(TRUE, TRUE, FALSE)). Positional alignment: Because both elements are vectors of equal length (3 elements), position $i$ in inventory$item corresponds directly to position $i$ in inventory$in_stock. Logical subsetting: Placing inventory$in_stock inside the square brackets [ ] forces R to evaluate each index: positions where in_stock is TRUE ( positions 1 and 2) are kept, while positions where it is FALSE (position 3) are filtered out, returning "Notebook" and "Pen".
+```
+Question #13:
+```{r}
+#Answer: Storing related data in separate vectors risks data misalignment from mismatched lengths or sorting, whereas grouping them into a list or data frame keeps attributes bound together safely as datasets grow. 
+```
+Conclusion
+```{r}
+#Answer: Vectors in R are homogeneous data structures that store elements of a single data type, while lists are heterogeneous containers that can store multiple data types, including vectors and other lists. Subsetting a vector with single brackets ([ ]) returns elements directly, whereas subsetting a list with [ ] returns a sub-list and double brackets ([[ ]]) extracts the actual underlying object. Choose a vector when working with uniform numeric or character data that requires fast, element-wise mathematical or logical operations. Choose a list when grouping complex, multi-type, or structured data (such as metadata, model outputs, or named record attributes) into a single object.
+```
+
+
+
+
+
+
+
+
+
